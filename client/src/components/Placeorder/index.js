@@ -30,7 +30,7 @@ const Placeorder = ({history}) => {
       },[message])
 
     if(!paymentMethod){
-        return history.push("/placeorder")
+        return history.push("/payment")
     }  
 
     

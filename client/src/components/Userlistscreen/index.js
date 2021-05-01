@@ -18,7 +18,7 @@ const Userlist = () => {
     const dispatch = useDispatch()
     
     useEffect(()=>{
-        if(/USERS_LIST_ERROR|UPDATE_ERROR/.test(users.message.id))setSubmitMsg({type:'error',msg:users.message.msg})
+        if(/USERS_LIST_ERROR/.test(users.message.id))setSubmitMsg({type:'error',msg:users.message.msg})
         if(/USER_DELETE/.test(users.message.id))setSubmitMsg({type:'success',msg:users.message.msg})
      },[users.message])
 

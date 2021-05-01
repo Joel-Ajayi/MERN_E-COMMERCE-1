@@ -25,6 +25,20 @@ exports.getProduct = async (req, res) => {
   }
 };
 
+exports.deleteProduct = async (req,res) =>{
+  try {
+    const { _id } = req.params;
+    if (!_id)
+      return res.status(400).json({ error: "No identity was provided" });
+
+    await Products.findByIdAndDelete(_id);
+    res.json({ msg: "Product deleted" });
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
+}
 // configure cloudinary
 cloudinary.config({
   cloud_name: CLOUD_NAME,

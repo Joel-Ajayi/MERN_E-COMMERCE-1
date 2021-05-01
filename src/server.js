@@ -1,15 +1,36 @@
+// varaiables
 require('dotenv').config({
     path:'./config/config.env'
 })
-const {PORT} = process.env
-const express= require('express')
+// connect to database
+require('./DB/connect')
 
-const usersRoute= require('./Routes/usersRoute')
+const express=require('express')
+const cookieParser=require('cookie-parser')
+const cors=require('cors')
+const morgan = require('morgan')
+// imports
+const userRoutes = require('./Routes/userRoute')
+const productRoutes = require('./Routes/productRoute')
+const orderRoutes = require('./Routes/orderRoute')
 
-const app= express()
+const app = express()
+// middlewares
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+app.use(cors({
+        origin:process.env.CLIENT_URL,
+        credentials:true
+}))
+app.use(cookieParser())
+app.use(morgan('dev'))
 
-app.use(usersRoute)
+// routes
+app.use('/api/users', userRoutes)
+app.use('/api/products', productRoutes)
+app.use('/api/orders', orderRoutes)
 
-app.listen(PORT,()=>{
-    console.log(`PORT 5000 RUNNING`)
-})
+// imports
+const {PORT}=process.env
+
+app.listen(PORT,()=>{console.log(`Port ${PORT} is running`)})
