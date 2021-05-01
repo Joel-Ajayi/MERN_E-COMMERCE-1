@@ -1,0 +1,94 @@
+.nav{
+    background-color: black;
+    padding: 10px 30px 2px;
+}
+
+.nav h2{
+    color: white;
+    padding-left: 17px;
+}
+
+.nav ul{
+    display: flex;
+    margin-left: auto;
+    justify-content: flex-end;
+    align-items: center;
+    list-style: none;
+}
+
+.nav ul li .sidebar-toggle{
+    display: none;
+}
+
+.nav ul li .nav-link{
+    text-decoration: none;
+    color: white;
+}
+.dropdown-toggle{
+    background-color: transparent;
+    border: none;
+    padding: 0 !important;
+    outline: none;
+}
+
+.dropdown-toggle:hover{
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+.sidebar{
+    width:100%;
+    background-color: rgb(20, 20, 20,0.9);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: absolute;
+    z-index: 2;
+    top:0;
+    padding: 5px !important;
+    left: -100%;
+    transition: 400ms;
+    list-style: none;
+    text-decoration: none;
+}
+
+.sidebar p{
+    padding: 8px 0 0 15px;
+}
+
+.sidebar ul li {
+    width: 100%;
+    display: flex;
+    border-radius: 2px;
+}
+
+.nav-link-clear{
+    color: white;
+}
+
+.sidebar ul li .nav-link{
+    color: white;
+}
+
+.sidebar ul li:hover{
+    background-color: blue;
+    box-shadow: 2px 2px rgb(51, 51, 51);
+}
+
+.profile-picture{
+    height: 25px;
+    width: 25px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+@media only screen and (max-width:768px){
+    .nav ul li .sidebar-toggle{
+        display: block;
+    }
+    .nav ul li .nav-link{
+        display: none;
+    }
+    
+}
