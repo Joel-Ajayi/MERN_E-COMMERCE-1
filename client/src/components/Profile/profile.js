@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Container, Row, Col, Image } from 'react-bootstrap';
+import { Button, Form, Container, Row, Col, Image, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import {AiFillCamera} from 'react-icons/ai'
+import {MdClear} from 'react-icons/md'
+import { Link } from 'react-router-dom';
 import Msg from '../Msg/Msg';
 import Loader from '../Loader/Loader'
 import { updateUser,updateAvatar,loadUser} from '../../redux/action/users';
+import { getMyOrders} from '../../redux/action/orders';
 import Styles from './profile.module.css'
 
 const Profile = () => {
@@ -14,11 +17,16 @@ const Profile = () => {
 
   const dispatch = useDispatch();
   const {loading,message,user,token} = useSelector((state) => state.auth);
-
+  const {myOrders} = useSelector(state=>state.orders)
+  
   useEffect(()=>{
     if(/USER_UPDATE/.test(message.id))setSubmitMsg({type:'success',msg:message.msg})
      if(/UPDATE_ERROR/.test(message.id))setSubmitMsg({type:'error',msg:message.msg})
   },[message])
+
+  useEffect(()=>{
+    dispatch(getMyOrders(token))
+  },[])
 
   const formChangeHandler = (ev) => {
     const { name, value } = ev.target;
@@ -46,11 +54,6 @@ const Profile = () => {
     await dispatch(loadUser(token));
   };
 
-
-//   const handleDelete= async (_id)=>{
-//     await dispatch(deleteUser(_id,token))
-//     await dispatch(loadUser(token));
-//   }
 
    const formSubmitHandler = async (ev) => {
     
@@ -98,7 +101,12 @@ const Profile = () => {
     <Col md={3}>
       <h1>User Profile</h1>
       <div className={Styles.Profile_pic_container}>
-      <Image className={Styles.profile_pic} src={user.avatar} />
+      {user.avatar.url ? 
+      <Image className={Styles.profile_pic} src={user.avatar.url} /> 
+      :
+      <div className={Styles.profile_pic_name} >{`${user.fName.slice(0,1).toUpperCase()} ${user.fName.slice(0,1).toUpperCase()}`}</div>
+      }
+      
       <Form>
       <Form.Group className={Styles.profile_pic_update}>
           <Form.File
@@ -170,9 +178,40 @@ const Profile = () => {
       </Form>
     </Col>
     <Col md={9}>
-hello
+      {myOrders.length ===0 ? <h1>No ORDERS YET</h1> :
+      <>
+      <h1>MY ORDERS</h1>
+      <Table hover striped bordered responsive className="text-center">
+               <thead className="bg-dark text-light">
+               <tr>
+               <th>ID</th>
+                   <th>USER</th>
+                   <th>DATE</th>
+                   <th>TOTAL</th>
+                   <th>PAID</th>
+                   <th>DELIVERED</th>
+                   <th>ACTION</th>
+               </tr>
+               </thead>
+
+               <tbody>
+               {myOrders.map((order,i)=>(
+                <tr key={i}>
+                  <td>{order._id}</td>
+                  <td>{order.user && `${order.user.fName} ${order.user.lName}`}</td>
+                  <td>{order.createdAt.substring(0,10)}</td>
+                  <td>{order.totalPrice}</td>
+                  <td>{order.isPaid ? order.paidAt.substring(0,10) : <MdClear size={25} color='red' /> }</td>
+                  <td>{order.isDelivered ? order.deliveredAt.substring(0,10) : <MdClear size={25} color='red' /> }</td>
+                  <td><Link className="btn btn-light" to={`/order/${order._id}`} >DETAILS</Link></td>
+                </tr>
+               ))}
+                   
+               </tbody>
+              </Table>
+      </>
+      }
     </Col>
-    
     </Row>
     </Container>
     </>

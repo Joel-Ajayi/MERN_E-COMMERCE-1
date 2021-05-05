@@ -24,13 +24,20 @@ import {
     USER_ITEM_ERROR,
     USER_ITEM_UPDATE_ERROR,
     USER_ITEM_UPDATE,
-    USER_ITEM_UPDATE_LOADING
+    USER_ITEM_UPDATE_LOADING,
+    PASS_RESET_LOADING,
+    PASS_RESET,
+    PASS_RESET_ERROR,
+    FORGOT_PASS,
+    FORGOT_PASS_ERROR,
+    FORGOT_PASS_LOADING
    } from "../action";
    
    const initState = {
-     user: {},
+     user: null,
      loading: false,
      token: null,
+     isAdmin:false,
      isAuth: false,
      message:{}
    };
@@ -38,6 +45,8 @@ import {
    export const authReducer = (state = initState, action) => {
      switch (action.type) {
        case LOADING:
+       case FORGOT_PASS_LOADING:
+       case PASS_RESET_LOADING:       
          return {
            ...state,
            loading: true,
@@ -48,6 +57,7 @@ import {
            loading:false,
            isLoading: false,
            isAuth: true,
+           isAdmin:action.payload.isAdmin,
            user: action.payload,
          };
        case REGISTER_SUCCESS: 
@@ -81,8 +91,9 @@ import {
          return {
            ...state,
            loading: false,
+           isAdmin:false,
            isAuth: false,
-           user:{},
+           user:null,
            token: null,
            message:{}
          };
@@ -90,6 +101,10 @@ import {
 
        case LOGIN_ERROR:
        case REGISTER_ERROR:
+       case FORGOT_PASS_ERROR:      
+       case FORGOT_PASS:
+       case PASS_RESET:
+       case PASS_RESET_ERROR:
        case ACTIVATION_ERROR:
        case USER_ERROR: {
          return {
@@ -106,7 +121,7 @@ import {
    
    const initState2 = {
      usersList:[],
-     userItem:{},
+     userItem:null,
      loading: false,
      message:{}
    };

@@ -48,7 +48,7 @@ const Cart = ({ match: { params }, location, history}) => {
                   <Col md={2}>
                     <Image
                       style={{ height: '100px', objectFit: 'contain' }}
-                      src={item.image}
+                      src={item.image.url}
                       fluid
                       rounded
                     />

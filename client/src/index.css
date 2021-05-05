@@ -1,3 +1,19 @@
+::-webkit-scrollbar{
+    width: 10px;
+    
+}
+::-webkit-scrollbar-thumb{
+    background-color: transparent;
+   
+}
+
+
+::-webkit-scrollbar-thumb{
+    background-color: #a2a2a2;
+    border-radius: 10px;
+    border:1px solid transparent;
+    background-clip: content-box;
+}
 .app{
     display: flex;
     flex-direction: column;

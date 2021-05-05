@@ -23,7 +23,7 @@ const Shippingscreen = ({history}) => {
 
     return (
         <Container>
-        <Checkoutsteps S1 S2 />
+        <Checkoutsteps S1 S2 progress={50}/>
         <h1>Shipping</h1>
         <Form onSubmit={onSubmit}>
           <Form.Group>

@@ -123,6 +123,7 @@ exports.refreshToken = async (req, res) => {
     const user= await Users.findOne({'refresh_token.token':refreshToken})
     if(!user)
       return res.status(401).json({ error: 'Invalid token' });
+      
     jwt.verify(refreshToken, REFRESH_TOKEN_SECRET,async (err,{ _id })=>{
            try{
                 if(err){
@@ -170,14 +171,14 @@ exports.resetPassword = async (req, res) => {
   try {
     const { forgotPassToken, password } = req.body;
     if (!forgotPassToken)
-      return res.status(400).send({ error: "You seemed to have clicked a invalid link" });
+      return res.status(404).send({ error: "You seemed to have clicked a invalid link" });
 
     const { _id } = await jwt.verify(forgotPassToken, PASS_RESET_TOKEN_SECRET);
 
     const user = await Users.findOne({ _id });
-    if (!user) return res.status(400).json({ error: "You seemed to have clicked a invalid link" });
+    if (!user) return res.status(404).json({ error: "You seemed to have clicked a invalid link" });
     if (user.password_reset !== forgotPassToken)
-      return res.status(400).json({ error: "You seemed to have clicked a invalid link" });
+      return res.status(404).json({ error: "You seemed to have clicked a invalid link" });
 
     user.password = await Users.hashPassword(password);
     user.password_reset = "";
@@ -189,20 +190,6 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-// exports.resetPasswordWhenLogged = async (req, res) => {
-//   try {
-//     const { password } = req.body;
-//     req.user.password = await User.hashPassword(password);
-//     req.user.password_reset = "";
-//     await req.user.save();
-//     res.status(200).json({ msg: "Password successfully changed" });
-//   } catch (error) {
-//     if (/invalid token|jwt expired|jwt malformed/.test(error.message))
-//       return res.status(400).json({ error: "You seemed to have clicked a invalid link" });
-//     res.status(500).json({ error: error.message });
-//   }
-// };
 
 exports. updateUserProfile = async (req, res) => {
   
@@ -299,17 +286,6 @@ exports.deleteUsers = async (req, res) => {
   }
 };
 
-// exports.deleteUser = async (req, res) => {
-//   try {
-//     await User.findByIdAndDelete(req.user._id);
-//     res.send({ msg: "user deleted" });
-//   } catch (err) {
-//     res.status(500).json({
-//       error: err.message,
-//     });
-//   }
-// };
-
 exports.logout = async (req, res) => {
   try {
     const logoutAll = req.body.logoutAll
@@ -360,7 +336,7 @@ exports.avatar = async (req, res) => {
             throw err;
           } 
           removeTmp(file.path);
-          req.user.avatar = result.secure_url;
+          req.user.avatar = {url:result.secure_url,public_id:result.public_id};
           await req.user.save();
           res.json({ msg: 'User updated successfully' });
         } catch (err) {

@@ -1,12 +1,15 @@
-import { Nav } from 'react-bootstrap';
+import { Nav, ProgressBar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-const index = ({ S1, S2, S3, S4 }) => {
+const index = ({ S1, S2, S3, S4, progress }) => {
   return (
+    <>
+    <ProgressBar now={progress} label={`${progress}%`} variant="success" max={100} min={0}/>
     <Nav className='bg-light justify-content-center mb-4' style={{border:'none'}} >
-      <Nav.Item style={{display:'flex',flexDirection:'row'}} >
+    <Nav.Item style={{display:'flex',flexDirection:'row'}} >
+      
           {S1 ? (
-              <Link to='/login' className='p-2'>
+              <Link to='/login' className='p-2 text-success'>
               <b>Sign In</b>
               </Link>
           ):(
@@ -14,7 +17,7 @@ const index = ({ S1, S2, S3, S4 }) => {
            )}
 
            {S2 ? (
-              <Link to='/shipping' className='p-2'>
+              <Link to='/shipping' className='p-2 text-success'>
                   <b>Shipping</b>
               </Link>
           ):(
@@ -22,7 +25,7 @@ const index = ({ S1, S2, S3, S4 }) => {
            )}
 
            {S3 ? (
-              <Link to='/payment' className='p-2'>
+              <Link to='/payment' className='p-2 text-success'>
                   <b>Payment</b>
               </Link>
           ):(
@@ -30,7 +33,7 @@ const index = ({ S1, S2, S3, S4 }) => {
            )}
 
            {S4 ? (
-              <Link to='/placeorder' className='p-2'>
+              <Link to='/placeorder' className='p-2 text-success'>
                   <b>Place Order</b>
               </Link>
           ):(
@@ -38,6 +41,7 @@ const index = ({ S1, S2, S3, S4 }) => {
            )}
       </Nav.Item>
     </Nav>
+    </>
   );
 };
 

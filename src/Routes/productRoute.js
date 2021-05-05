@@ -1,15 +1,18 @@
 const route = require('express').Router();
-const { getAllProducts, getProduct, createProduct, deleteProduct } = require('../Controllers/productControllers');
+const { getAllProducts, getProduct, createProduct, deleteProduct, updateProduct, updateReviews } = require('../Controllers/productControllers');
 
 const { auth, adminAuth } = require('../Middleware/auth');
-const { upload } = require('../Middleware/upload');
+
 
 route.get('/', getAllProducts);
 route.get('/:_id',getProduct);
-route.post('/create',auth, adminAuth,upload(1500000,'productImg'),createProduct,(error,req,res,next)=>{
+route.post('/create',auth, adminAuth,createProduct,(error,req,res,next)=>{
     res.status(400).json({error:error.message})
   })
-  route.delete('/delete/:_id',auth, adminAuth,deleteProduct)
+
+route.patch('/update/:_id',auth, adminAuth,updateProduct)
+route.patch('/updateReviews/:_id',auth, adminAuth,updateReviews)
+route.delete('/delete/:_id',auth, adminAuth,deleteProduct)
 
 module.exports = route;
 

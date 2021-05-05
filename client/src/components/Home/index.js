@@ -1,39 +1,30 @@
 import React,{useEffect,useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {Col, Container, Row} from 'react-bootstrap'
-import {loadProducts} from '../../redux/action/products'
 import ProductItem from './ProductItem'
 import Loader from '../Loader/Loader'
+import Topproducts from '../Topproducts'
 
 function Home() {
-    const [products,setProducts] = useState([])
-
     const dispatch = useDispatch()
-    const {productItems,loading} = useSelector(state => state.products)
-
-    useEffect(()=>{
-        dispatch(loadProducts())
-    },[dispatch])
+    const {productList,loading} = useSelector(state => state.products)
     
-    useEffect(()=>{
-        if(productItems)
-        setProducts([...productItems])
-    },[productItems])
-    
-
     return (
         <>
-        { loading? <Loader /> : products &&
-            <Container>
+        { loading? <Loader /> : ProductItem &&
+        <>
+        <Topproducts />
+          <div style={{padding:'0 7%'}}>
            <h1>Latest Products</h1>
            <Row>
-           {products.map((item,id)=>{
-               return <Col key={id} xl={3} sm={12} md={6} lg={4} >
+           {productList.map((item,id)=>{
+               return <Col key={id} sm={6} lg={4} xl={3}>
                 <ProductItem item={item} />
                </Col>
             })}
            </Row>
-        </Container>
+        </div>
+        </>
         }
         </>
     )

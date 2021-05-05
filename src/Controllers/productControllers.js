@@ -1,7 +1,5 @@
 const Products = require('../Models/productModel');
-const cloudinary = require('cloudinary');
-const fs = require('fs');
-const { CLOUD_NAME, CLOUD_API_KEY, CLOUD_API_SECRET } = process.env;
+
 
 exports.getAllProducts = async (req, res) => {
   try {
@@ -39,16 +37,9 @@ exports.deleteProduct = async (req,res) =>{
     });
   }
 }
-// configure cloudinary
-cloudinary.config({
-  cloud_name: CLOUD_NAME,
-  api_key: CLOUD_API_KEY,
-  api_secret: CLOUD_API_SECRET,
-});
 
-exports.createProduct = async (req, res) => {
+exports.updateProduct = async (req,res) =>{
   try {
-    const file = req.file;
     const {
       name,
       description,
@@ -56,11 +47,47 @@ exports.createProduct = async (req, res) => {
       category,
       price,
       countInStock,
-      rating,
-      numReviews,
+    } = req.body;
+  
+    const {_id} = req.params
+    const product = await Products.findOne({_id})
+  
+    if(!product)
+     return res.status(404).json({ error: "Product does not exist" });
+  
+     product.name=name
+     product.description=description
+     product.brand=brand
+     product.category=category
+     product.countInStock=countInStock
+     product.price=price
+  
+     await product.save()
+  
+     res.status(200).json({msg:'Product updated'})
+  
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+  
+}
+
+exports.createProduct = async (req, res) => {
+  try {
+    
+    const {
+      name,
+      description,
+      brand,
+      category,
+      price,
+      countInStock,
+      image
     } = req.body;
 
-    if (!file) {
+    if (!image) {
       return res.status(400).json({ error: 'No product Image was uploaded' });
     }
 
@@ -70,9 +97,7 @@ exports.createProduct = async (req, res) => {
       !brand ||
       !category ||
       !price ||
-      !countInStock ||
-      !rating ||
-      !numReviews
+      !countInStock 
     ) {
       return res.status(400).json({ error: 'Please fill out all fields' });
     }
@@ -85,33 +110,13 @@ exports.createProduct = async (req, res) => {
       category,
       price:Number(price),
       countInStock:Number(countInStock),
-      rating:Number(rating),
-      numReviews:Number(numReviews),
+      image
     };
 
-    cloudinary.v2.uploader.upload(
-      file.path,
-      {
-        folder: 'Product'
-      },
-      async (err, result) => {
-        try {
-          if (err) {
-            removeTmp(file.path);
-            throw err;
-          }
-          removeTmp(file.path);
-          productForm.image = result.secure_url;
-          const newProduct = new Products(productForm);
-          await newProduct.save();
-          res.json({ msg: 'Product created Successfully' });
-        } catch (err) {
-          return res.status(500).json({
-            error: err,
-          });
-        }
-      }
-    );
+      const newProduct = new Products(productForm);
+      await newProduct.save();
+      res.json({ msg: 'Product created Successfully' });
+
   } catch (err) {
     res.status(500).json({
       error: err.message,
@@ -119,8 +124,44 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-const removeTmp = (path) => {
-  fs.unlinkSync(path, (err) => {
-    if (err) throw new Error();
-  });
-};
+exports.updateReviews = async (req,res) =>{
+  try {
+    const {
+      rating, comment
+    } = req.body;
+  
+    const {_id} = req.params
+    const product = await Products.findOne({_id})
+  
+    if(!product)
+     return res.status(404).json({ error: "Product does not exist" });
+     
+    const reviewedAlready = product.reviews.find(r=>r.user.toString() === req.user._id.toString())
+    if(reviewedAlready)
+      return res.status(400).json({ error: "Product already reviewed" });
+     
+    const review={
+      name:`${req.user.fName} ${req.user.lName}`,
+      rating:Number(rating),
+      comment,
+      image:req.user.avatar.url || '',
+      user:req.user._id
+    }  
+
+    product.reviews=product.reviews.concat(review)
+    product.numReviews=product.reviews.length 
+    product.rating = Number(product.reviews.reduce((acc,item)=>item.rating+acc,0)/product.reviews.length).toFixed(1)
+
+   await product.save()
+  
+    res.status(200).json({msg:'Review added'})
+  
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+  
+}
+
+

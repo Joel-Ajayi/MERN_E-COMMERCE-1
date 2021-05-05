@@ -1,11 +1,17 @@
 .nav{
+    width: 100%;
+    display: flex;
+    padding-left: 0;
+    margin-bottom: 0;
     background-color: black;
-    padding: 10px 30px 2px;
+    padding:0 30px;
 }
 
-.nav h2{
+.nav .brand{
     color: white;
-    padding-left: 17px;
+    font-size: xx-large;
+    font-weight: 400;
+    margin-right: 20px;
 }
 
 .nav ul{
@@ -21,6 +27,8 @@
 }
 
 .nav ul li .nav-link{
+    padding-top: 0 !important;
+    margin-top: 0 !important;
     text-decoration: none;
     color: white;
 }
@@ -34,6 +42,7 @@
 .dropdown-toggle:hover{
     background-color: transparent;
     border: none;
+    flex-wrap: nowrap;
     outline: none;
 }
 
@@ -82,8 +91,21 @@
     object-fit: contain;
     border-radius: 50%;
 }
+.profile-picture-name{
+    height: 25px;
+    width: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: large;
+    padding-bottom: 2px;
+    border-radius: 50%;
+    background-color: rgb(250, 40, 75);
+}
 
-@media only screen and (max-width:768px){
+
+
+@media only screen and (max-width:770px){
     .nav ul li .sidebar-toggle{
         display: block;
     }

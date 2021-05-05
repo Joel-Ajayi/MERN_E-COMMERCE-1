@@ -7,10 +7,12 @@ exports.auth = async (req, res, next) => {
     let token = req.header("Authorization");
     if (!token) throw new Error("Unable to access page, please login");
     token = token.replace("Bearer ", "");
-
     const { _id } = await jwt.verify(token, ACCESS_TOKEN_SECRET);
+    
     const user = await User.findOne({ _id });
+    
     if (!user) throw new Error("Unable to access page, Please login");
+   
     req.user = user;
     req.token = token;
     next();

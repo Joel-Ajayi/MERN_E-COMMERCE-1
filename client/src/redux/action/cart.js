@@ -5,8 +5,6 @@ axios.defaults.baseURL = 'http://localhost:5000';
 
 export const addToCart = (id,qty) => async (dispatch,getState) => {
    
-    // try {
-        console.log(id,qty)
         dispatch({ type: CART_LOADING });
         const { data } = await axios.get(`/api/products/${id}`);
 
@@ -17,12 +15,6 @@ export const addToCart = (id,qty) => async (dispatch,getState) => {
         });
 
         localStorage.setItem('cartItems',JSON.stringify(getState().cart.cartItems))
-    //   } catch (error) {
-    //     dispatch({
-    //       type: CART_ERROR,
-    //       payload: error.response.data.error,
-    //     });
-    //   }
 };
 
 export const removeItemFromCart = (id) => async (dispatch,getState) => {

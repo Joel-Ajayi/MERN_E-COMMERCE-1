@@ -18,16 +18,18 @@ import Orderscreen from './components/Orderdetails'
 import Userslist from './components/Userlistscreen'
 import Useredit from './components/UserEdit'
 import Productlist from './components/Productlistscreen'
-import Productedit from './components/ProductEdit'
 import  Profilescreen from './components/Profile/profile'
-import Createproduct from './components/Createproduct'
-
+import CreateAndEditproduct from './components/Create&Editproduct'
+import OrdersList from './components/OrderList'
+import {loadProducts} from './redux/action/products'
+import ResetPass from './components/Resetpass/resetPass'
+import ForgotPass from './components/Forgotpass/forgotPass'
 import './index.css'
 import './bootstrap.min.css'
 
 function App() {
   const {auth} = useSelector(state => state)
-  const {token,isAuth,user} = auth
+  const {token,isAuth,isAdmin} = auth
 
   const dispatch = useDispatch()
 
@@ -47,8 +49,10 @@ function App() {
     }
   },[token])
 
-  
 
+  useEffect(()=>{
+    dispatch(loadProducts())
+},[dispatch])
 
 
   return (
@@ -59,24 +63,26 @@ function App() {
          <Route path='/' component={Home} exact/>
          <Route  path='/product/:_id' component={Productscreen} exact/>
          <Route  path='/cart/:_id?' component={Cart} exact/>
+         <Route  path='/forgot_pass' component={ForgotPass} exact/>
+         <Route  path='/reset_pass/:_id' component={ResetPass} exact/>
          <Route path='/login' render={ (props)=>{
             const redirect=props.location.search.split('=')[1]
             return (redirect && isAuth) ? <Redirect to={`/${redirect}`} /> : isAuth ? <Redirect to='/users/profile' /> : <Login {...props} /> 
-         }
+         } 
          } />
          <Route exact path='/register'>{isAuth ? <Redirect to='/users/profile' /> : <Register />  }</Route>
-         <Route exact path='/activate/:activation_token'>{isAuth ? <Redirect to='/profile' /> : <Activateaccount /> }</Route>
+         <Route exact path='/activate/:activation_token' render={props=>isAuth ? <Redirect to='/profile' /> : <Activateaccount {...props} /> }/>
           <Route exact path='/users/profile' >{!isAuth ?  <Redirect to='/login' /> : <Profilescreen /> }</Route>
-         <Route exact path='/shipping'>{isAuth ? <Shippingscreen />: <Redirect to='/login' />}</Route>
-         <Route exact path='/payment' >{isAuth ? <Paymentscreen />: <Redirect to='/login' />  }</Route>
-         <Route exact path='/placeorder'>{isAuth ? <Placeorderscreen/> : <Redirect to='/login' />  }</Route>
-         <Route exact path='/order/:_id' >{isAuth ? <Orderscreen />: <Redirect to='/login' />  }</Route>
-         <Route exact path='/admin/users/'>{(isAuth && user.isAdmin ) ? <Userslist />: isAuth ?  <Redirect to='/users/profile' /> : <Redirect to='/login' />  }</Route>
-         <Route exact path='/admin/users/:_id'>{(isAuth && user.isAdmin ) ? <Useredit />: isAuth ?  <Redirect to='/users/profile' /> : <Redirect to='/login' />  }</Route>
-         <Route exact path='/admin/products/'>{(isAuth && user.isAdmin ) ? <Productlist />: isAuth ?  <Redirect to='/users/profile' /> : <Redirect to='/login' />  }</Route>
-         <Route exact path='/admin/products/edit/:_id'>{(isAuth && user.isAdmin ) ? <Productedit />: isAuth ?  <Redirect to='/profile' /> : <Redirect to='/login' />  }</Route>
-         <Route exact path='/admin/products/create'>{(isAuth && user.isAdmin ) ? <Createproduct />: isAuth ?  <Redirect to='/profile' /> : <Redirect to='/login' />  }</Route>
-  
+         <Route exact path='/shipping' render={props=>isAuth ? <Shippingscreen {...props} />: <Redirect to='/login' />}></Route>
+         <Route exact path='/payment' render={props=>isAuth ? <Paymentscreen {...props} />: <Redirect to='/login' /> } />
+         <Route exact path='/placeorder' render={props=>isAuth ? <Placeorderscreen {...props}/> : <Redirect to='/login' />  }/>
+         <Route exact path='/order/:_id' render={props =>isAuth ? <Orderscreen {...props} />: <Redirect to='/login' />  } />
+         <Route exact path='/admin/orders' render={props =>(isAuth && isAdmin ) ? <OrdersList {...props} /> : isAuth ? <Redirect to='/users/profile' /> : <Redirect to='/login' />  } />
+         <Route exact path='/admin/users/'>{isAdmin ? <Userslist />: <Redirect to='/login?redirect=admin/users/' />  }</Route>
+         <Route exact path='/admin/users/edit/:_id' render={props=>isAdmin ? <Useredit {...props} /> : <Redirect to='/login?redirect=admin/users/' />  }/>
+         <Route exact path='/admin/products/'>{ isAdmin  ? <Productlist /> : <Redirect to='/login?redirect=admin/products/' />  }</Route>
+         <Route exact path='/admin/products/create' render={props=> isAdmin ? <CreateAndEditproduct {...props} /> : <Redirect to='/login?redirect=admin/products/create' />  } />
+         <Route exact path='/admin/products/edit/:_id' render={props=> isAdmin ? <CreateAndEditproduct {...props} />: <Redirect to={`/login?redirect=admin/products/edit/${props.match.params._id}`} />  } />
         <Route />
         </main>
         <Footer />

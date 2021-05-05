@@ -1,10 +1,41 @@
 const Orders = require('../Models/orderModel');
 
 
+
+exports.getAllOrder = async (req,res) =>{
+  
+  try {
+   const orders = await Orders.find({}).populate('user','fName lName')
+   res.status(200).json({msg:orders})
+  } catch (error) {
+    res.status(500).json({error:error.message})
+  }
+  
+}
+
+exports.markOrderAsDelivered = async (req,res) =>{
+  
+  try {
+    const {_id} = req.params
+
+   const order = await Orders.findOne({_id}).populate('user','fName lName')
+
+   if(!order)
+    return res.status(400).json({error:'Order not found'})
+   order.isDelivered = true
+   order.deliveredAt = Date.now()
+   await order.save()
+   res.status(200).json({msg:order})
+  } catch (error) {
+    res.status(500).json({error:error.message})
+  }
+  
+}
+
 exports.getOrderById = async (req, res) => {
   const {_id} = req.params
   try {
-   const order = await Orders.findOne({_id}).populate({path:'user',select:'fName fullName lName email'}).exec()
+   const order = await Orders.findOne({_id}).populate('user','fName fullName lName email')
 
   if(!order)
   return res.status(400).json({error:'Order not found'})
@@ -18,10 +49,26 @@ exports.getOrderById = async (req, res) => {
   
 };
 
+exports.getMyOrders = async (req, res) => {
+  try {
+    console.log('order')
+   const order = await Orders.find({user:req.user._id})
+
+   res.status(200).json({msg:order})
+  
+
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({error:error.message})
+  }
+  
+  
+};
+
 exports.updateOrderToPaid = async (req, res) => {
   const {_id} = req.params
   try {
-   const order = await Orders.findOne({_id}).populate({path:'user',select:'fName fullName lName email'}).exec()
+   const order = await Orders.findOne({_id}).populate('user','fName lName email')
 
   if(!order)
   return res.status(400).json({error:'Order not found'})

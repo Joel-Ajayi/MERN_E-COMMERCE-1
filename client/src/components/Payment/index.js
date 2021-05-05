@@ -25,7 +25,7 @@ const Paymentscreen = ({history}) => {
 
     return (
         <Container>
-        <Checkoutsteps S1 S2 S3 />
+        <Checkoutsteps S1 S2 S3 progress={75} />
         <h1>PAYMENT METHOD</h1>
         <Form onSubmit={onSubmit}>
           <Form.Group>

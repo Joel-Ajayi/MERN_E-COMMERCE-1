@@ -32,8 +32,13 @@ const UserEdit = ({match,history}) => {
   useEffect(()=>{
     setDisplay(true);
     dispatch(getUserById(_id,token))
-    setFormData({fName:userItem.fName,lName:userItem.lName,isAdmin:userItem.isAdmin})
   },[_id,dispatch])
+
+  useEffect(()=>{
+    setFormData({fName:userItem.fName,lName:userItem.lName,isAdmin:userItem.isAdmin})
+  },[userItem,dispatch])
+
+
 
   const formChangeHandler = (ev) => {
     console.log(formData)

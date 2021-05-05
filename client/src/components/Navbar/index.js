@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import './nav.css';
 import { Link } from 'react-router-dom';
 import { MdClear } from 'react-icons/md';
-import { FaBars, FaShoppingCart, FaUserAlt } from 'react-icons/fa';
+import { FaBars, FaUserAlt } from 'react-icons/fa';
+import { AiOutlineShoppingCart } from 'react-icons/ai'
 import { logout } from '../../redux/action/users';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dropdown } from 'react-bootstrap';
+import { Dropdown, Image } from 'react-bootstrap';
+import Searchbar from '../Searchbar/Searchbar'
 
 function Navbar() {
   const [sideBar, setSideBar] = useState('-100%');
@@ -26,14 +28,15 @@ function Navbar() {
   return (
     <>
       <div className='nav'>
-        <h2 className='mb-4'>
+        <span className='brand'>
           joeDev
-        </h2>
+        </span>
+        <Searchbar />
         <ul>
-
+        
         <li>
-            <Link className='text-light' to='/cart'>
-              <FaShoppingCart /> Cart
+            <Link className='text-light mr-2' to='/cart'>
+              <AiOutlineShoppingCart size={30} />
             </Link>
           </li>
           <li>
@@ -59,13 +62,13 @@ function Navbar() {
             <>
               <li>
                 <Dropdown className='nav-link'>
-                  <Dropdown.Toggle className='dropdown-toggle' id='#items'>
-                    <img
-                      className='profile-picture'
-                      src={user.avatar}
-                      alt='profile'
-                    />{' '}
-                    {user.fName}
+                  <Dropdown.Toggle className='dropdown-toggle d-flex' id='#items'>
+                  {user.avatar.url ? 
+                   <Image className='profile-picture' src={user.avatar.url} /> 
+                   :
+                   <span className='profile-picture-name' >{`${user.fName.slice(0,1).toUpperCase()}`}</span>
+                   }
+                   {user.fName}
                   </Dropdown.Toggle>
                   <Dropdown.Menu className="pl-2">
                       <Link className='nav-link  text-dark' to='/users/profile'>Profile</Link>
@@ -76,7 +79,7 @@ function Navbar() {
               
               {/* admin routes */}
               {user.isAdmin && (
-                <li>
+              <li>
                 <Dropdown className='nav-link'>
                   <Dropdown.Toggle className='dropdown-toggle' id='#items'>
                     ADMIN
@@ -105,7 +108,7 @@ function Navbar() {
       </div>
 
       {/* sidebar */}
-      {winWidth <= 768 && (
+      {winWidth <= 770 && (
         <div style={{ left: sideBar }} className='sidebar'>
           <p>
             <MdClear

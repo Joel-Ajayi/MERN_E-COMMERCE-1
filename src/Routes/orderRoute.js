@@ -1,11 +1,13 @@
 const route = require('express').Router();
-const { addOrder, getOrderById, updateOrderToPaid } = require('../Controllers/orderController');
+const { addOrder, getOrderById, updateOrderToPaid, getAllOrder, markOrderAsDelivered,getMyOrders } = require('../Controllers/orderController');
 
 const { auth, adminAuth } = require('../Middleware/auth');
-const { upload } = require('../Middleware/upload');
 
-route.get('/:_id',auth,getOrderById);
+route.get('/orderbyid/:_id',auth,getOrderById);
+route.get('/',auth,adminAuth,getAllOrder);
+route.get('/myorders',auth,getMyOrders);
 route.patch('/:_id/pay',auth,updateOrderToPaid);
+route.patch('/:_id/delivered',auth,adminAuth,markOrderAsDelivered);
 route.post('/create',auth, addOrder)
 
 module.exports = route;

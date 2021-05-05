@@ -25,7 +25,13 @@ import {
   USER_ITEM_LOADING,
   USER_ITEM_UPDATE_LOADING,
   USER_ITEM_UPDATE,
-  USER_ITEM_UPDATE_ERROR
+  USER_ITEM_UPDATE_ERROR,
+  PASS_RESET_LOADING,
+  PASS_RESET,
+  PASS_RESET_ERROR,
+  FORGOT_PASS,
+  FORGOT_PASS_ERROR,
+  FORGOT_PASS_LOADING
 } from './index';
 
 axios.defaults.baseURL = 'http://localhost:5000';
@@ -95,7 +101,7 @@ export const login=(formData)=>{
 export const loadUser=(token)=>{
     return async dispatch=>{
         try {
-            const {data} =await axios.get(`/api/users/info`,{headers:{Authorization:`Bearer ${token}`}})
+            const {data} =await axios.get(`/api/users/info`,config(token))
 
             dispatch({
                 type:USER_LOADED,
@@ -154,7 +160,7 @@ export const updateUser = (formData,token) =>{
             dispatch({
                 type:LOADING
             })
-            await axios.patch(`/api/users/update`,formData,{headers:{Authorization:`Bearer ${token}`}})          
+            await axios.patch(`/api/users/update`,formData,config(token))          
             dispatch({
                 type:USER_UPDATE,
                 payload:{id:USER_UPDATE,msg:'User updated successfully'}
@@ -177,7 +183,7 @@ export const deleteUser = (_id,token) =>{
             dispatch({
                 type:USER_DELETE_LOADING
             })
-            await axios.delete(`/api/users/delete/${_id}`,{headers:{Authorization:`Bearer ${token}`}})          
+            await axios.delete(`/api/users/delete/${_id}`,config(token))          
             dispatch({
                 type:USER_DELETE,
                 payload:{id:USER_DELETE,msg:'User deleted'}
@@ -253,7 +259,7 @@ export const getAllUsers = (token) => async (dispatch) =>{
     try{
         dispatch({type:USERS_LIST_LOADING})
 
-        const {data} = await axios.get(`api/users/`,{headers:{Authorization:`Bearer ${token}`}})
+        const {data} = await axios.get(`api/users/`,config(token))
         dispatch({
             type:USERS_LIST,
             payload:data.msg
@@ -273,8 +279,8 @@ export const getUserById = (_id,token) => async (dispatch) =>{
     try{
         dispatch({type:USER_ITEM_LOADING})
 
-        const {data} = await axios.get(`api/users/${_id}`,{headers:{Authorization:`Bearer ${token}`}})
-        console.log(data.msg)
+        const {data} = await axios.get(`api/users/${_id}`,config(token))
+        
         dispatch({
             type:USER_ITEM,
             payload:data.msg
@@ -293,7 +299,7 @@ export const getUserById = (_id,token) => async (dispatch) =>{
 export const updateUserItem = (_id,formData,token) => async (dispatch) =>{
     try{
         dispatch({type:USER_ITEM_UPDATE_LOADING})
-        const {data} = await axios.patch(`/api/users/update_user/${_id}`,formData,{headers:{Authorization:`Bearer ${token}`}})
+        const {data} = await axios.patch(`/api/users/update_user/${_id}`,formData,config(token))
         dispatch({
             type:USER_ITEM_UPDATE,
             payload:{id:USER_ITEM_UPDATE,msg:data.msg}
@@ -306,6 +312,44 @@ export const updateUserItem = (_id,formData,token) => async (dispatch) =>{
             type:USER_ITEM_UPDATE_ERROR,
             payload:{id:USER_ITEM_UPDATE_ERROR,msg:error.response.data.error}
         }) 
+    }
+}
+
+export const resetPassword = (formData) => async (dispatch) =>{
+    try{
+        dispatch({type:PASS_RESET_LOADING})
+        const {data} = await axios.patch(`/api/users/pass_reset`,formData)
+        dispatch({
+            type:PASS_RESET,
+            payload:{id:PASS_RESET,msg:data.msg}
+        }) 
+    }catch(error){
+        dispatch({
+            type:PASS_RESET_ERROR,
+            payload:{id:PASS_RESET_ERROR,msg:error.response.data.error}
+        }) 
+    }
+}
+
+export const forgotPassword = (formData) => async (dispatch) =>{
+    try{
+        dispatch({type:FORGOT_PASS_LOADING})
+        const {data} = await axios.post(`/api/users/forgot_pass`,formData)
+        dispatch({
+            type:FORGOT_PASS,
+            payload:{id:FORGOT_PASS,msg:data.msg}
+        }) 
+    }catch(error){
+        dispatch({
+            type:FORGOT_PASS_ERROR,
+            payload:{id:FORGOT_PASS_ERROR,msg:error.response.data.error}
+        }) 
+    }
+}
+const config = (token) =>{
+    return {headers:{
+        'Content_Type':'application/json',
+        Authorization:`Bearer ${token}`} 
     }
 }
 

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Msg from '../Msg/Msg'
 import Loader from '../Loader/Loader'
 import {createOrder} from '../../redux/action/orders'
-import {CREATE_ORDER_ERROR} from '../../redux/action'
+import {CREATE_ORDER_ERROR,RESET_ORDER_ITEM} from '../../redux/action'
 import { Link } from 'react-router-dom';
 import Checkoutsteps from '../CheckoutSteps'
 
@@ -23,7 +23,8 @@ const Placeorder = ({history}) => {
       if(orderItem){
           history.push(`/order/${orderItem._id}`)
       }
-    },[orderItem,history])
+      return ()=>dispatch({type:RESET_ORDER_ITEM})
+    },[orderItem])
 
     useEffect(()=>{
         if(/CREATE_ORDER_ERROR/.test(message.id))setSubmitMsg({type:'error',msg:message.msg})
@@ -67,7 +68,7 @@ const Placeorder = ({history}) => {
               msg={submitMsg.msg}
      />}
         <Container>
-        <Checkoutsteps S1 S2 S3 S4 />
+        <Checkoutsteps S1 S2 S3 S4 progress={100}/>
         <Row>
             <Col md={8} className="p-2">
                  <ListGroup variant='flush'>

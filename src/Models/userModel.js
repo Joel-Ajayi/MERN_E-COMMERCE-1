@@ -31,10 +31,8 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Please fill all fields'],
     },
     avatar: {
-      type: String,
-      default:'https://res.cloudinary.com/dbmumpbin/image/upload/v1617717448/Avatar/images_rfk5ju.png',
-      required:true
-        
+      url:{ type: String},
+      public_id:{ type: String}
     },
     isAdmin: {
       type: Boolean,

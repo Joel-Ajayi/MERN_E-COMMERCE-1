@@ -7,7 +7,8 @@ exports.upload=(size,type)=>{
       fileSize:size
     },
     fileFilter(req,file,cb){
-      if(!file.originalname.match(/\.(png|jpeg|jpg|gif)$/)){
+      console.log(file)
+      if(!file.mimetype.match(/\/(png|jpeg|jpg|gif)$/)){
         return cb(new Error('Incorrect file format'))
       }
       cb(undefined,true)
